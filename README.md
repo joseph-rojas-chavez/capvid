@@ -238,6 +238,10 @@ Built app location (Debug):
 - **ML speech model extension** — automatic caption generation from video audio
 - **AVFoundation** (planned) — video import, audio extraction, burn-in export
 
+## Acknowledgements
+Speech-to-text is provided by [WhisperKit](https://github.com/argmaxinc/argmax-oss-swift) from Argmax, Inc. WhisperKit runs [OpenAI Whisper](https://github.com/openai/whisper) models on device through Core ML. CapVid downloads those models from [`argmaxinc/whisperkit-coreml`](https://huggingface.co/argmaxinc/whisperkit-coreml).
+WhisperKit and OpenAI Whisper are licensed under the MIT License. CapVid's caption
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
