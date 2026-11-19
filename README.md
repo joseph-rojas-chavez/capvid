@@ -111,6 +111,12 @@ CapVid/
 
 Download `CapVid-1.0.dmg` from the [Releases](https://github.com/joseph-rojas-chavez/capvid/releases) page. Open the disk image and copy `CapVidApp.app` to Applications.
 
+**Requirements**
+
+- **macOS 14 or later.**
+- **Apple Silicon.** WhisperKit uses the Neural Engine. An Intel Mac can fall back to the GPU, but that is slower and less reliable.
+- **Internet on first transcription.** The disk image does not include the speech model. The app downloads the selected Whisper model, about 75 MB to 1.5 GB, into `~/Library/Application Support/CapVid/Models/`. Later runs use that copy.
+
 macOS shows this warning because the app is not notarized with a paid Apple Developer certificate:
 
 > Apple could not verify “CapVidApp.app” is free of malware that may harm your Mac or compromise your privacy.
@@ -130,6 +136,8 @@ xattr -cr /Applications/CapVidApp.app
 ```
 
 ## How to Run
+
+Building from source requires **Xcode 16 or later**. People using the disk image do not need Xcode.
 
 1. Open `CapVid.xcodeproj` in Xcode
 2. Select the **CapVidApp** scheme
@@ -214,13 +222,13 @@ Set these before export; they are baked into the output video.
 
 | Setting | Value |
 |---------|-------|
-| Platform | macOS 13.0+ |
+| Platform | macOS 14.0+ |
 | Swift version | 6.0 |
 | Bundle ID | com.capvid.app |
 | Display name | CapVid |
 | Category | Video (`public.app-category.video`) |
 | Version | 1.0 |
-| Code signing | Automatic (Sign to Run Locally) |
+| Code signing | Ad-hoc signature on the public disk image. Xcode builds use automatic signing (Sign to Run Locally). |
 
 ## Implementation Status
 
