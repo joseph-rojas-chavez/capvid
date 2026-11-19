@@ -4,14 +4,14 @@ CapVid is a macOS app that takes a video as input, generates captions using an M
 
 The project includes a core library that sanitizes transcript timing so captions display correctly — without overlaps or timing glitches at the end of a video.
 
-**Current status:** The app is runnable on Mac and the caption timeline engine is implemented. The full video import → ML transcription → styling → export pipeline is the intended product flow and is being built out.
+**Current status:** The app runs on Mac. Video import, WhisperKit transcription, caption styling, review, and export are implemented. Caption review edits the first 6 lines on screen.
 
 ## Purpose
 
 CapVid automates the full caption workflow for video creators:
 
 1. **Import a video** — load your source file
-2. **Generate captions** — an ML model extension transcribes speech from the video's audio track
+2. **Generate captions** — WhisperKit transcribes speech from the video's audio track
 3. **Review & adjust** — preview caption text and timing; optionally edit before export
 4. **Style captions** — choose font and text size for how subtitles appear on the video
 5. **Export** — get a new video with captions burned in, plus a caption text file for reference
@@ -29,7 +29,7 @@ CapVid's `CaptionTimeline` engine sanitizes these segments before burn-in so sub
 
 ### ML-Powered Caption Generation
 
-CapVid uses an extension of an ML speech model to automatically generate captions from the video's audio. You provide a video file; the model transcribes spoken content and produces timed `TranscriptionSegment` entries (text + start/end timestamps).
+CapVid uses WhisperKit to automatically generate captions from the video's audio. You provide a video file; the model transcribes spoken content and produces timed `TranscriptionSegment` entries (text + start/end timestamps).
 
 No manual transcription required for the base workflow — though you can review and edit the output before exporting.
 
@@ -69,7 +69,7 @@ The `CaptionTimeline` library cleans raw ML output before burn-in:
 ```
 Video input
     ↓
-ML model extension  →  transcribe audio  →  raw TranscriptionSegment[]
+WhisperKit        →  transcribe audio  →  raw TranscriptionSegment[]
     ↓
 Review caption text (optional edits)
     ↓
@@ -104,8 +104,8 @@ CapVid/
 | Component | Role |
 |-----------|------|
 | CapVid (library) | Caption timeline processing — sanitization engine |
-| CapVidApp (app) | macOS UI — video import, ML transcription, styling, export |
-| ML model extension | Speech-to-text caption generation from video audio |
+| CapVidApp (app) | macOS UI — video import, WhisperKit transcription, styling, export |
+| WhisperKit | On-device Whisper speech-to-text from video audio |
 
 ## How to Run
 
@@ -121,21 +121,23 @@ CapVid/
 | Step | Feature |
 |------|---------|
 | Input | Load video file |
-| Transcription | ML model extension generates timed captions from audio |
+| Transcription | WhisperKit generates timed captions from audio |
 | Review | View and edit caption text before export |
 | Styling | Set font and text size for on-video captions |
 | Processing | `CaptionTimeline` sanitizes segment timing |
 | Export | New video with burned-in captions + caption text file |
 
-### Current demo (implemented)
+### Caption tab
 
-The app currently includes a working preview of the caption sanitization engine:
+The caption tab is the working app flow:
 
-- **Timeline summary** — export length, raw segment count, sanitized segment count
-- **Raw Input** — sample transcript segments with overlapping and out-of-bounds timing
-- **Sanitized for Burn-In** — segments after `CaptionTimeline.sanitizedForBurn` runs
+- **Import** — file picker or drag-and-drop
+- **Transcribe** — WhisperKit generates timed captions
+- **Review** — edit caption text; the screen shows the first 6 lines
+- **Style** — font, text size, and a live preview
+- **Export** — a captioned video, and a separate SRT-style caption file
 
-Sample data uses a 10-second export timeline and 5 segments demonstrating overlap, out-of-bounds timing, and tail pile-up.
+Sample transcript lines that demonstrate overlap and tail pile-up remain in the `demoSampleDataProducesSanitizedOutput` test. They are not shown in the app.
 
 ## Core Library
 
@@ -203,13 +205,13 @@ Set these before export; they are baked into the output video.
 | Feature | Status |
 |---------|--------|
 | Caption timeline sanitization (`CaptionTimeline`) | ✅ Implemented |
-| Demo UI with sample segments | ✅ Implemented |
-| Video file import | 🔲 In progress |
-| ML model extension (speech-to-text) | 🔲 In progress |
-| Font & text size controls | 🔲 In progress |
-| Caption text review / edit UI | 🔲 In progress |
-| Export video with burned-in captions | 🔲 In progress |
-| Export caption text file alongside video | 🔲 In progress |
+| Demo UI with sample segments | Removed. Sample lines remain only in `demoSampleDataProducesSanitizedOutput` |
+| Video file import | ✅ Implemented (file picker and drag-and-drop) |
+| WhisperKit speech-to-text | ✅ Implemented |
+| Font & text size controls | ✅ Implemented |
+| Caption text review / edit UI | Partial. The first 6 lines are editable |
+| Export video with burned-in captions | ✅ Implemented |
+| Export caption text file | ✅ Implemented (separate SRT-style text export) |
 
 ## Building from the Command Line
 
@@ -234,13 +236,15 @@ Built app location (Debug):
 
 - **Foundation** — time intervals, string handling
 - **SwiftUI** — app UI
+- **AVFoundation** — video import, audio extraction, burn-in export
 - **CapVid** — local Swift package (caption timeline engine)
-- **ML speech model extension** — automatic caption generation from video audio
-- **AVFoundation** (planned) — video import, audio extraction, burn-in export
+- **[WhisperKit](https://github.com/argmaxinc/argmax-oss-swift)** — on-device Whisper speech-to-text via Core ML
 
 ## Acknowledgements
+
 Speech-to-text is provided by [WhisperKit](https://github.com/argmaxinc/argmax-oss-swift) from Argmax, Inc. WhisperKit runs [OpenAI Whisper](https://github.com/openai/whisper) models on device through Core ML. CapVid downloads those models from [`argmaxinc/whisperkit-coreml`](https://huggingface.co/argmaxinc/whisperkit-coreml).
-WhisperKit and OpenAI Whisper are licensed under the MIT License. CapVid's caption
+
+WhisperKit and OpenAI Whisper are licensed under the MIT License. CapVid's caption timeline and app code are separate and are covered by this repository's MIT license.
 
 ## License
 
