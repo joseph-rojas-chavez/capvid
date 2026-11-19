@@ -240,4 +240,4 @@ Built app location (Debug):
 
 ## License
 
-Not specified.
+MIT Liscense
