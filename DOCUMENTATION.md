@@ -471,4 +471,4 @@ Settings persist in `UserDefaults` under key `capvid.appSettings`.
 
 ## License
 
-Not specified.
+MIT. See [LICENSE](LICENSE).
