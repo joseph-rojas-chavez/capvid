@@ -107,6 +107,28 @@ CapVid/
 | CapVidApp (app) | macOS UI — video import, WhisperKit transcription, styling, export |
 | WhisperKit | On-device Whisper speech-to-text from video audio |
 
+## Download
+
+Download `CapVid-1.0.dmg` from the [Releases](https://github.com/joseph-rojas-chavez/capvid/releases) page. Open the disk image and copy `CapVidApp.app` to Applications.
+
+macOS shows this warning because the app is not notarized with a paid Apple Developer certificate:
+
+> Apple could not verify “CapVidApp.app” is free of malware that may harm your Mac or compromise your privacy.
+
+The file is the build from this repository. Open it once with these steps:
+
+1. Click **Done** on the warning.
+2. Open **System Settings → Privacy & Security**.
+3. Scroll to the message about **CapVidApp.app** and click **Open Anyway**, then **Open**.
+
+If **Open Anyway** is not listed, control-click `CapVidApp.app` and choose **Open**, then **Open** again.
+
+If macOS says the app is damaged, run this in Terminal after copying it to Applications:
+
+```bash
+xattr -cr /Applications/CapVidApp.app
+```
+
 ## How to Run
 
 1. Open `CapVid.xcodeproj` in Xcode
